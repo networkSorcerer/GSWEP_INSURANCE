@@ -14,7 +14,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long user_id;
 
     @Column(nullable = false, unique = true)
     private String username;
@@ -26,5 +26,7 @@ public class User {
     @Column(nullable = false)
     private UserRoleEnum role;
 
-    // 다른 필드 (예: email 등) 필요 시 추가
+    @OneToMany
+    @JoinColumn(name = "id")
+    private User user;
 }

@@ -1,5 +1,7 @@
 package com.gswep.insurance.member.entity;
 
+import com.gswep.insurance.insurance.entity.Insurance;
+import com.gswep.insurance.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +34,14 @@ public class Member {
 
     @Column(nullable = false)
     private LocalDateTime birth_day;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "insurance_id")
+    private Insurance insurance;
 
 }
 
