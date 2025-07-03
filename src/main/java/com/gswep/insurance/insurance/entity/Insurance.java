@@ -5,6 +5,8 @@ import com.gswep.insurance.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="insurance")
 @Getter
@@ -23,12 +25,11 @@ public class Insurance {
     @Column(nullable = false)
     private String insurance_name;
 
-    @ManyToOne
-    @JoinColumn(name = "form_id")
-    private Form form;
+    @OneToMany(mappedBy = "insurance")
+    private List<Form> forms;
 
-    @OneToMany
-    @JoinColumn(name = "member_id")
-    private Member member;
+
+    @OneToMany(mappedBy = "insurance")
+    private List<Member> member;
 
 }

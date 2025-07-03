@@ -22,7 +22,7 @@ public class Form {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name="insurance_id")
     private Insurance insurance;
 }

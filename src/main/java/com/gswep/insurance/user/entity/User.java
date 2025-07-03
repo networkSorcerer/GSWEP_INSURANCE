@@ -1,7 +1,10 @@
 package com.gswep.insurance.user.entity;
 
+import com.gswep.insurance.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 
 @Entity
@@ -10,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name="user")
 public class User {
 
     @Id
@@ -26,7 +30,6 @@ public class User {
     @Column(nullable = false)
     private UserRoleEnum role;
 
-    @OneToMany
-    @JoinColumn(name = "id")
-    private User user;
+    @OneToMany(mappedBy = "user")
+    private List<Member> member;
 }
