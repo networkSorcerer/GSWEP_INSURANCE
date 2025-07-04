@@ -24,7 +24,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
         // 로그인 처리 URL 설정
-        setFilterProcessesUrl("/api/user/login");
+        setFilterProcessesUrl("/auth/login");
     }
 
 
@@ -38,7 +38,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             // 인증 매니저를 통해 사용자 인증 시도
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            requestDto.getUsername(),  // 사용자명
+                            requestDto.getEmail(),  // 사용자명
                             requestDto.getPassword(),  // 비밀번호
                             null  // 권한 목록은 null로 전달
                     )
