@@ -16,6 +16,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j(topic = "로그인 및 JWT 생성")
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -32,19 +33,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
-            // 요청에서 로그인 정보를 읽어와 DTO에 매핑
-            LoginRequestDto requestDto = new ObjectMapper().readValue(request.getInputStream(), LoginRequestDto.class);
+            // 스트림 한 번만 읽기
+            String body = new String(request.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            log.info("Login request body: " + body);
 
-            // 인증 매니저를 통해 사용자 인증 시도
+            // 문자열을 LoginRequestDto로 파싱
+            LoginRequestDto requestDto = new ObjectMapper().readValue(body, LoginRequestDto.class);
+
             return getAuthenticationManager().authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            requestDto.getEmail(),  // 사용자명
-                            requestDto.getPassword(),  // 비밀번호
-                            null  // 권한 목록은 null로 전달
+                            requestDto.getEmail(),
+                            requestDto.getPassword(),
+                            null
                     )
             );
         } catch (IOException e) {
-            // 예외 발생 시 로그 출력 및 RuntimeException 던지기
             log.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }

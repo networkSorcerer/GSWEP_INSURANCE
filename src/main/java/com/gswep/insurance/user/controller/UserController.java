@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 
     private final AuthService authService;
@@ -34,6 +34,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
+        log.info("로그인 요청 - 이메일 : {}",loginRequestDto.getEmail());
         System.out.println(loginRequestDto.getEmail());
         String tokenDTO = authService.login(loginRequestDto);
         return ResponseEntity.ok(tokenDTO);

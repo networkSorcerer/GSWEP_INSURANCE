@@ -49,3 +49,46 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+def reactDir = "$projectDir/src/main/Insurance"
+
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["$projectDir/src/main/resources"]
+		}
+	}
+}
+
+task installReact(type: Exec) {
+	workingDir reactDir
+	inputs.dir reactDir
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine 'cmd', '/c', 'npm install'
+	} else {
+		commandLine 'npm', 'install'
+	}
+}
+
+task buildReact(type: Exec) {
+	dependsOn "installReact"
+	workingDir reactDir
+	inputs.dir reactDir
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine 'cmd', '/c', 'npm run build'
+	} else {
+		commandLine 'npm', 'run', 'build'
+	}
+}
+
+task copyReactBuildFiles(type: Copy) {
+	dependsOn "buildReact"
+	from "$reactDir/dist"
+	into "$projectDir/src/main/resources/static"
+}
+
+processResources {
+	dependsOn "copyReactBuildFiles"
+}
