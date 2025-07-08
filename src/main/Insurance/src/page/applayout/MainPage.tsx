@@ -3,7 +3,7 @@ import ContractList from "../contract/ContractList";
 const MainPage = () => {
   return (
     <div>
-      <p>MAIN</p>
+      <p>INSURANCE</p>
       <ContractList />
     </div>
   );

@@ -27,6 +27,24 @@ public class ContractService {
         }
         return contractResponseDTOS;
     }
+
+    public List<ContractResponseDTO> searchList(String select,String keyword ) {
+        List<ContractEntity> contractEntities;
+        if("contract_no".equals(select)){
+            contractEntities = contractRepository.findByContract_no(keyword);
+            log.info("hey contract no:{}",contractEntities);
+        } else {
+            contractEntities = contractRepository.findByMemberName(keyword);
+            log.info("hey member:{}",contractEntities);
+        }
+        List<ContractResponseDTO> contractResponseDTOS = new ArrayList<>();
+        for(ContractEntity contractEntity : contractEntities) {
+            contractResponseDTOS.add(convertContractResponseDTO(contractEntity));
+        }
+        return contractResponseDTOS;
+    }
+
+
     private ContractResponseDTO convertContractResponseDTO(ContractEntity contractEntity){
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
         contractResponseDTO.setContract_id(contractEntity.getContract_id());
@@ -51,4 +69,6 @@ public class ContractService {
         contractResponseDTO.setEtc(contractEntity.getEtc());
         return contractResponseDTO;
     }
+
+
 }

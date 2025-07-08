@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AxiosApi from "../../api/AxiosApi";
 import {
   Paper,
@@ -9,21 +9,30 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import type { ContractItem } from "../model/contract";
+import { ContractContext } from "../../api/provider/SearchProvider";
 
 const ContractList = () => {
+  const [data, setData] = useState<ContractItem[]>([]);
+
+  const { searchKeyword } = useContext(ContractContext);
+
   useEffect(() => {
-    ContractList();
-  }, []);
+    Contract();
+  }, [searchKeyword]);
+
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("ko-KR");
 
   const formatMoney = (money: number) => money.toLocaleString("ko-KR") + "원";
-  const [data, setData] = useState([]);
-  const ContractList = async () => {
-    const res = await AxiosApi.contractApi();
+
+  const Contract = async () => {
+    console.log("검색어", searchKeyword);
+    const res = await AxiosApi.contractApi(searchKeyword);
     setData(res.data.list);
     console.log("contract list", res);
   };
+
   return (
     <TableContainer component={Paper} sx={{ my: 3 }}>
       <Table>

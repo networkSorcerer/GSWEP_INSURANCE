@@ -2,13 +2,15 @@ import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter } from "react-router-dom";
 
 import Login from "../page/login/Login";
-import MainPage from "../page/applayout/MainPage";
+import Contracts from "../page/contract/Contracts";
+import AppLayout from "../page/applayout/AppLayout";
 
 const routers: RouteObject[] = [
   { path: "/", element: <Login /> },
   {
     path: "/main",
-    element: <MainPage />,
+    element: <AppLayout />,
+    children: [{ index: true, element: <Contracts /> }],
   },
 ];
 

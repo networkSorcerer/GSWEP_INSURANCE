@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +22,21 @@ public class ContractController {
     @Autowired
     ContractService contractService;
     @GetMapping("/list")
-    public ResponseEntity<Map<String , Object>> contractList(){
+    public ResponseEntity<Map<String , Object>> contractList(@RequestParam(required = false) String select, @RequestParam(required = false) String keyword){
+        log.info("selectValue: {}",select);
+        log.info("keyword: {}",keyword);
+
         Map<String , Object> resultMap = new HashMap<>();
-        List<ContractResponseDTO> list = contractService.list();
-        resultMap.put("list",list);
+        List<ContractResponseDTO> list;
+
+        if (keyword == null || keyword.isEmpty()) {
+            list = contractService.list();
+        }
+        else {
+            list = contractService.searchList(select, keyword); // 예: 키워드로 필터링
+        }
+
+        resultMap.put("list", list);
         return ResponseEntity.ok(resultMap);
     }
 }
