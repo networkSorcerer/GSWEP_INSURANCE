@@ -92,6 +92,7 @@ const AppLayout = ({ children }: { children?: React.ReactNode }) => {
         sx={{
           flexGrow: 1,
           p: 3,
+          minHeight: "600px",
         }}
       >
         <Toolbar />

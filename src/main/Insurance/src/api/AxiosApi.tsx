@@ -52,5 +52,17 @@ const AxiosApi = {
       params,
     });
   },
+  getDataById: async (id: number) => {
+    const accessToken = localStorage.getItem("accessToken");
+    const params = {
+      id: id,
+    };
+    return await axios.get(GSWEP_DOMAIN + "/contract/id", {
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+      params,
+    });
+  },
 };
 export default AxiosApi;

@@ -1,4 +1,4 @@
-import { Pagination } from "@mui/material";
+import { Pagination, useMediaQuery } from "@mui/material";
 import { PageNavigateStyled } from "./styled";
 import type { FC } from "react";
 
@@ -16,6 +16,7 @@ export const PageNavigate: FC<IPageNavigateProps> = ({
   itemsCountPerPage,
 }) => {
   const totalPages = Math.ceil(totalItemsCount / itemsCountPerPage);
+  const isMobile = useMediaQuery("(max-width:600px)");
 
   const handleChange = (_: React.ChangeEvent<unknown>, value: number) => {
     onChange(value);
@@ -31,6 +32,8 @@ export const PageNavigate: FC<IPageNavigateProps> = ({
         color="primary"
         showFirstButton
         showLastButton
+        siblingCount={isMobile ? 0 : 1}
+        boundaryCount={1}
       />
     </PageNavigateStyled>
   );

@@ -15,6 +15,7 @@ export interface ContractItem {
 export interface getContractResponse {
   data: {
     list: ContractItem[];
+    totalCount: number;
   };
 }
 

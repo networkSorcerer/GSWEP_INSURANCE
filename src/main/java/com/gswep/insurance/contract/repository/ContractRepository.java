@@ -15,5 +15,8 @@ public interface ContractRepository extends JpaRepository<ContractEntity, Long> 
     List<ContractEntity> findByContract_no(@Param("no") String contractNo, Pageable pageable);
     @Query("SELECT c FROM ContractEntity c WHERE c.member_name LIKE %:name%")
     List<ContractEntity> findByMemberName(@Param("name") String memberName, Pageable pageable);
-
+    @Query("SELECT COUNT(c) FROM ContractEntity c WHERE c.contract_no LIKE %:no%")
+    Long findByContract_noCount(@Param("no") String keyword);
+    @Query("SELECT COUNT(c) FROM ContractEntity c WHERE c.member_name LIKE %:name%")
+    Long findByMemberNameCount(@Param("name") String keyword);
 }

@@ -30,6 +30,11 @@ public class ContractService {
         }
         return contractResponseDTOS;
     }
+    public ContractResponseDTO findUserInsurance(Long id) {
+        ContractEntity contractEntity = contractRepository.findById(id)
+                .orElseThrow(()-> new RuntimeException("해당 회원 정보가 없습니다."));
+        return convertContractResponseDTO(contractEntity);
+    }
 
     public List<ContractResponseDTO> searchList(String select,String keyword, int page, int size ) {
         Pageable pageable = PageRequest.of(page, size);
@@ -48,9 +53,19 @@ public class ContractService {
         return contractResponseDTOS;
     }
 
-    public Integer totalCount(PageRequest pageRequest) {
-        return contractRepository.findAll(pageRequest).getTotalPages();
+
+    public Long totalCount() {
+        return contractRepository.count();  // 전체 아이템 개수 리턴
     }
+
+    public Long searchTotalCount(String select,String keyword) {
+        if("contract_no".equals(select)){
+            return contractRepository.findByContract_noCount(keyword);
+        } else {
+            return contractRepository.findByMemberNameCount(keyword);
+        }
+    }
+
 
     private ContractResponseDTO convertContractResponseDTO(ContractEntity contractEntity){
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
