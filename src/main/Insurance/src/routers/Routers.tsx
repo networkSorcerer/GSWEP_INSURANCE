@@ -3,7 +3,7 @@ import { createBrowserRouter } from "react-router-dom";
 
 import Login from "../page/login/Login";
 import Contracts from "../page/contract/Contracts";
-import AppLayout from "../page/applayout/AppLayout";
+import AppLayout from "../layout/applayout/AppLayout";
 
 const routers: RouteObject[] = [
   { path: "/", element: <Login /> },

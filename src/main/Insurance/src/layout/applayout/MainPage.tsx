@@ -1,4 +1,4 @@
-import ContractList from "../contract/ContractList";
+import ContractList from "../../page/contract/ContractList";
 
 const MainPage = () => {
   return (

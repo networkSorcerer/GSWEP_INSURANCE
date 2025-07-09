@@ -11,15 +11,29 @@ import {
 } from "@mui/material";
 import type { ContractItem } from "../model/contract";
 import { ContractContext } from "../../api/provider/SearchProvider";
+import { PageNavigate } from "../../common/PageNavigate";
 
 const ContractList = () => {
   const [data, setData] = useState<ContractItem[]>([]);
-
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
   const { searchKeyword } = useContext(ContractContext);
 
   useEffect(() => {
     Contract();
-  }, [searchKeyword]);
+  }, [searchKeyword, currentPage]);
+
+  useEffect(() => {
+    const fetchTotalPage = async () => {
+      try {
+        const res = await AxiosApi.coursePage(0, 10);
+        setTotalPage(res.data.totalPages); // 전체 페이지 수 설정
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTotalPage();
+  }, []);
 
   const formatDate = (dateStr: string) =>
     new Date(dateStr).toLocaleDateString("ko-KR");
@@ -28,9 +42,12 @@ const ContractList = () => {
 
   const Contract = async () => {
     console.log("검색어", searchKeyword);
-    const res = await AxiosApi.contractApi(searchKeyword);
+    const res = await AxiosApi.contractApi(searchKeyword,currentPage,10);
     setData(res.data.list);
     console.log("contract list", res);
+  };
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber); // 페이지 번호 업데이트 (1부터 시작)
   };
 
   return (
@@ -76,6 +93,13 @@ const ContractList = () => {
           ))}
         </TableBody>
       </Table>
+      <PageNavigate
+        activePage={currentPage}
+        itemsCountPerPage={10}
+        totalItemsCount={totalPage} // 전체 항목 수 전달
+        // pageRangeDisplayed={5}
+        onChange={handlePageChange} // 페이지 변경 시 호출
+      />
     </TableContainer>
   );
 };

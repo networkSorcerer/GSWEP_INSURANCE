@@ -18,7 +18,11 @@ const AxiosApi = {
     return { token, success };
   },
 
-  contractApi: async (searchKeyword: any): Promise<getContractResponse> => {
+  contractApi: async (
+    searchKeyword: any,
+    page: number,
+    size: number
+  ): Promise<getContractResponse> => {
     const accessToken = localStorage.getItem("accessToken");
     console.log("accessToken", accessToken);
     console.log("api searchKey", searchKeyword);
@@ -29,7 +33,23 @@ const AxiosApi = {
       params: {
         select: searchKeyword.oname,
         keyword: searchKeyword.sname,
+        page: page,
+        size: size,
       },
+    });
+  },
+  coursePage: async (page: number, size: number) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    const params = {
+      page: page,
+      size: size,
+    };
+    return await axios.get(GSWEP_DOMAIN + "/contract/count", {
+      headers: {
+        Authorization: `${accessToken}`,
+      },
+      params,
     });
   },
 };

@@ -6,6 +6,8 @@ import com.gswep.insurance.contract.repository.ContractRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,8 +21,9 @@ public class ContractService {
     private ContractRepository contractRepository;
 
 
-    public List<ContractResponseDTO> list() {
-        List<ContractEntity> contractEntities = contractRepository.findAll();
+    public List<ContractResponseDTO> list(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<ContractEntity> contractEntities = contractRepository.findAll(pageable).getContent();
         List<ContractResponseDTO> contractResponseDTOS = new ArrayList<>();
         for (ContractEntity contractEntity : contractEntities){
             contractResponseDTOS.add(convertContractResponseDTO(contractEntity));
@@ -28,13 +31,14 @@ public class ContractService {
         return contractResponseDTOS;
     }
 
-    public List<ContractResponseDTO> searchList(String select,String keyword ) {
+    public List<ContractResponseDTO> searchList(String select,String keyword, int page, int size ) {
+        Pageable pageable = PageRequest.of(page, size);
         List<ContractEntity> contractEntities;
         if("contract_no".equals(select)){
-            contractEntities = contractRepository.findByContract_no(keyword);
+            contractEntities = contractRepository.findByContract_no(keyword,pageable);
             log.info("hey contract no:{}",contractEntities);
         } else {
-            contractEntities = contractRepository.findByMemberName(keyword);
+            contractEntities = contractRepository.findByMemberName(keyword,pageable);
             log.info("hey member:{}",contractEntities);
         }
         List<ContractResponseDTO> contractResponseDTOS = new ArrayList<>();
@@ -44,6 +48,9 @@ public class ContractService {
         return contractResponseDTOS;
     }
 
+    public Integer totalCount(PageRequest pageRequest) {
+        return contractRepository.findAll(pageRequest).getTotalPages();
+    }
 
     private ContractResponseDTO convertContractResponseDTO(ContractEntity contractEntity){
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
@@ -69,6 +76,7 @@ public class ContractService {
         contractResponseDTO.setEtc(contractEntity.getEtc());
         return contractResponseDTO;
     }
+
 
 
 }
