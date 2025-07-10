@@ -39,4 +39,10 @@ public class UserController {
         String tokenDTO = authService.login(loginRequestDto);
         return ResponseEntity.ok(tokenDTO);
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenDTO> refreshToken(@RequestBody String refreshToken){
+        TokenDTO newTokens = authService.reissueAccessToken(refreshToken);
+        return ResponseEntity.ok(newTokens);
+    }
 }

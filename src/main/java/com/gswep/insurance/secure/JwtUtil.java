@@ -1,18 +1,31 @@
 package com.gswep.insurance.secure;
 
+import com.gswep.insurance.jwt.entity.RefreshToken;
+import com.gswep.insurance.jwt.repository.RefreshTokenRepository;
 import com.gswep.insurance.user.entity.UserRoleEnum;
+import com.gswep.insurance.user.requestDTO.TokenDTO;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -25,11 +38,23 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
     // 토큰 만료시간
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 60분
+    // 리프레시 토큰 시간
+    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7L;
+
+    private static final String BEARER_TYPE = "Bearer"; // 토큰의 타입
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Value("${jwt.secret}") // Base64 Encode 한 SecretKey
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+    @Autowired
+    public JwtUtil(@Value("${jwt.secret}") String secretKey, RefreshTokenRepository refreshTokenRepository) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+        this.refreshTokenRepository = refreshTokenRepository;
+    }
 
     // 객체 초기화
     @PostConstruct
@@ -38,7 +63,43 @@ public class JwtUtil {
         byte[] bytes = Base64.getDecoder().decode(secretKey);
         key = Keys.hmacShaKeyFor(bytes);
     }
+    public TokenDTO generateTokenDto(Authentication authentication) {
+        // 인증 객체에서 권한 정보 추출
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
+        long now = (new Date()).getTime(); // 현재 시간
+        // 토큰 만료 시간 설정
+        Date accessTokenExpiresIn = new Date(now + TOKEN_TIME);
+        Date refreshTokenExpiresIn = new Date(now + REFRESH_TOKEN_EXPIRE_TIME);
+
+        // Access Token 생성
+        String accessToken = Jwts.builder()
+                .setSubject(authentication.getName()) // 사용자명 설정
+                .claim(AUTHORIZATION_KEY, authorities)  // 권한 정보 저장
+                .setExpiration(accessTokenExpiresIn)  // 만료 시간 설정
+                .signWith(key, SignatureAlgorithm.HS512) // 서명 방식 설정
+                .compact();
+
+        // Refresh Token 생성
+        String refreshToken = Jwts.builder()
+                .setSubject(authentication.getName()) // 사용자명 설정
+                .claim(AUTHORIZATION_KEY, authorities)  // 권한 정보 저장
+                .setExpiration(refreshTokenExpiresIn)  // 만료 시간 설정 (Date로 변환)
+                .signWith(key, SignatureAlgorithm.HS512) // 서명 방식 설정
+                .compact();
+
+
+        // 결과를 DTO로 반환
+        return TokenDTO.builder()
+                .grantType(BEARER_TYPE)
+                .accessToken(accessToken)
+                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
+                .refreshToken(refreshToken)  // 리플레시 토큰
+                .refreshTokenExpiresIn(refreshTokenExpiresIn.getTime()) // 리프레시 토큰 만료 시간
+                .build();
+    }
 
     // JwtAuthenticationFilter의 successfulAuthentication()에서 사용됨 (로그인 성공 시)
     // 토큰 생성
@@ -93,5 +154,47 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token) {
         // 주어진 토큰에서 클레임 정보(사용자 정보)를 파싱하여 반환
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    public Authentication getAuthentication(String accessToken){
+        Claims claims = parseClaims(accessToken);
+        if(claims.get(AUTHORIZATION_KEY) == null) {
+            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        }
+        Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(claims.get(AUTHORIZATION_KEY).toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+        User principal = new User(claims.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, accessToken, authorities);
+    }
+
+    private Claims parseClaims(String token){
+        try{
+            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        }catch(ExpiredJwtException e){
+            return e.getClaims();
+        }
+    }
+    public void saveRefreshToken(com.gswep.insurance.user.entity.User user, String refreshToken, LocalDateTime expirationDate) {
+        // 기존 리프레시 토큰 조회
+        RefreshToken existingRefreshToken = refreshTokenRepository.findByUser(user)
+                .orElse(null); // 없으면 null 반환
+
+        if (existingRefreshToken != null) {
+            // 기존 리프레시 토큰이 있으면 갱신
+            existingRefreshToken.setRefreshToken(refreshToken);  // 리프레시 토큰 업데이트
+            existingRefreshToken.setExpirationDate(expirationDate);  // 만료일 업데이트
+            refreshTokenRepository.save(existingRefreshToken);  // 갱신된 리프레시 토큰 저장
+        } else {
+            // 기존 리프레시 토큰이 없으면 새로 생성하여 저장
+            RefreshToken refreshTokenEntity = RefreshToken.builder()
+                    .user(user)
+                    .refreshToken(refreshToken)
+                    .expirationDate(expirationDate)
+                    .build();
+
+            refreshTokenRepository.save(refreshTokenEntity);  // 새로 저장
+        }
     }
 }

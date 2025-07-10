@@ -3,13 +3,13 @@ import AxiosApi from "../../../api/AxiosApi";
 import { CancelButton2 } from "../../../layout/styled/Button";
 import { ModalStyle } from "../../../layout/styled/ModalStyle";
 import DownloadButton from "./DownloadButton";
-interface Insurer {
-  name: string;
-  ceo: string;
-  address: string;
-  phone: string;
-  fax: string;
-}
+// interface Insurer {
+//   name: string;
+//   ceo: string;
+//   address: string;
+//   phone: string;
+//   fax: string;
+// }
 const ContractModal = (props: {
   close: () => void;
   open: boolean;
