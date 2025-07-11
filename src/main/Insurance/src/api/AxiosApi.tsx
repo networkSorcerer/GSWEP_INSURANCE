@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { getContractResponse } from "../page/model/contract";
+import AxiosInstance from "./AxiosInstance";
 
 const GSWEP_DOMAIN = "http://localhost:8111";
 
@@ -23,13 +24,8 @@ const AxiosApi = {
     page: number,
     size: number
   ): Promise<getContractResponse> => {
-    const accessToken = localStorage.getItem("accessToken");
-    console.log("accessToken", accessToken);
     console.log("api searchKey", searchKeyword);
-    return await axios.get(GSWEP_DOMAIN + "/contract/list", {
-      headers: {
-        Authorization: `${accessToken}`,
-      },
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/list", {
       params: {
         select: searchKeyword.oname,
         keyword: searchKeyword.sname,
@@ -39,28 +35,19 @@ const AxiosApi = {
     });
   },
   coursePage: async (page: number, size: number) => {
-    const accessToken = localStorage.getItem("accessToken");
-
     const params = {
       page: page,
       size: size,
     };
-    return await axios.get(GSWEP_DOMAIN + "/contract/count", {
-      headers: {
-        Authorization: `${accessToken}`,
-      },
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/count", {
       params,
     });
   },
   getDataById: async (id: number) => {
-    const accessToken = localStorage.getItem("accessToken");
     const params = {
       id: id,
     };
-    return await axios.get(GSWEP_DOMAIN + "/contract/id", {
-      headers: {
-        Authorization: `${accessToken}`,
-      },
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/id", {
       params,
     });
   },

@@ -1,9 +1,11 @@
 package com.gswep.insurance.user.entity;
 
+import com.gswep.insurance.jwt.entity.RefreshToken;
 import com.gswep.insurance.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,18 +25,28 @@ public class User {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true, name = "name")
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
+
     private Integer phoneNumber;
     private String profilePictureUrl;
 
     @Enumerated(EnumType.STRING) // Enum을 문자열로 저장
-    @Column(nullable = false)
+    @Column(nullable = true)
     private UserRoleEnum role;
+
+    @Column(name = "provider", length = 50)
+    private String provider;
+
+    @Column(name = "provider_id", length = 255)
+    private String providerId;
 
     @OneToMany(mappedBy = "user")
     private List<Member> member;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 }

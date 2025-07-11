@@ -2,8 +2,10 @@ package com.gswep.insurance.user.service;
 
 import com.gswep.insurance.jwt.entity.RefreshToken;
 import com.gswep.insurance.jwt.repository.RefreshTokenRepository;
+import com.gswep.insurance.oauth.dto.OAuth2LoginRequestDTO;
 import com.gswep.insurance.secure.JwtUtil;
 import com.gswep.insurance.user.entity.User;
+import com.gswep.insurance.user.entity.UserRoleEnum;
 import com.gswep.insurance.user.repository.UserRepository;
 import com.gswep.insurance.user.requestDTO.LoginRequestDto;
 import com.gswep.insurance.user.requestDTO.TokenDTO;
@@ -14,12 +16,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,4 +87,36 @@ public class AuthService {
                 LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7));
         return newToken;
     };
+
+    public TokenDTO OAuth2Login(OAuth2LoginRequestDTO loginRequestDTO) {
+        Optional<User> existingUser = userRepository.findByProviderAndProviderId(loginRequestDTO.getProvider(), loginRequestDTO.getProviderId());
+        User user;
+        if(existingUser.isPresent()){
+            user = existingUser.get();
+        } else {
+            user = new User();
+            user.setEmail(loginRequestDTO.getEmail());
+            user.setUsername(loginRequestDTO.getName());
+            user.setProvider(loginRequestDTO.getProvider());
+            user.setProviderId(loginRequestDTO.getProviderId());
+            user.setRole(UserRoleEnum.USER);
+            userRepository.save(user);
+        }
+
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("USER"));
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUser_id(), null, authorities);
+
+        TokenDTO loginToken = tokenProvider.generateTokenDto(authentication);
+
+        try {
+            tokenProvider.saveRefreshToken(
+                    user, loginToken.getRefreshToken(),
+                    LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7)
+            );
+        } catch (Exception e ){
+            throw new RuntimeException("리프레시 토큰 저장에 실패했습니다.");
+        }
+        return loginToken;
+    }
 }

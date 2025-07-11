@@ -2,6 +2,10 @@ import { Box, Button, styled, TextField, Typography } from "@mui/material";
 import { useState } from "react";
 import AxiosApi from "../../api/AxiosApi";
 import { useNavigate } from "react-router-dom";
+import GoogleLoginButton from "../../layout/styled/GoogleLoginButton";
+import Common from "../../util/Common";
+import AxiosInstance from "../../api/AxiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const LoginStyle = styled(Box)({
   position: "absolute",
@@ -14,10 +18,17 @@ const LoginStyle = styled(Box)({
   left: "50%",
   transform: "translate(-50%, -50%)",
 });
+interface DecodedGoogleToken {
+  email: string;
+  name: string;
+  sub: string; // Google 고유 사용자 ID
+}
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [, setError] = useState("");
+
   const navigate = useNavigate();
   const LoginApi = async () => {
     console.log("email", email);
@@ -33,6 +44,33 @@ const Login = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+  const handleGoogleLoginSuccess = async (credentialResponse: any) => {
+    if (credentialResponse.credential) {
+      const decodedToken = jwtDecode<DecodedGoogleToken>(
+        credentialResponse.credential
+      );
+      const { email, name, sub: providerId } = decodedToken;
+      const accessToken = credentialResponse.credential;
+      Common.setAccessToken(accessToken);
+      try {
+        const response = await AxiosInstance.post("/api/auth/google", {
+          email,
+          name,
+          provider: "google",
+          providerId,
+        });
+        const { accessToken, refreshToken } = response.data;
+        Common.setAccessToken(accessToken);
+        Common.setRefreshToken(refreshToken);
+        console.log(jwtDecode(accessToken));
+      } catch (err) {
+        setError("OAuth 로그인 실패");
+      }
+    }
+  };
+  const handleGoogleLoginError = () => {
+    setError("구글 로그인 오류: ");
   };
   return (
     <LoginStyle>
@@ -62,6 +100,10 @@ const Login = () => {
       >
         login
       </Button>
+      <GoogleLoginButton
+        onSuccess={handleGoogleLoginSuccess}
+        onError={handleGoogleLoginError}
+      />
     </LoginStyle>
   );
 };
