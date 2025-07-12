@@ -4,6 +4,7 @@ import com.gswep.insurance.jwt.entity.RefreshToken;
 import com.gswep.insurance.jwt.repository.RefreshTokenRepository;
 import com.gswep.insurance.oauth.dto.OAuth2LoginRequestDTO;
 import com.gswep.insurance.secure.JwtUtil;
+import com.gswep.insurance.secure.OAuthJwtUtil;
 import com.gswep.insurance.user.entity.User;
 import com.gswep.insurance.user.entity.UserRoleEnum;
 import com.gswep.insurance.user.repository.UserRepository;
@@ -37,7 +38,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtUtil tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final OAuthJwtUtil oAuthJwtUtil;
     public UserResponseDTO signUp(UserRequestDTO requestDTO) {
         if(userRepository.existsByEmail(requestDTO.getEmail())){
             throw new IllegalStateException("이미 등록된 Email입니다.");
@@ -70,7 +71,7 @@ public class AuthService {
     public TokenDTO reissueAccessToken(String refreshToken) {
         log.info("토큰 재발급 요청 - 리프레시 토큰 : {}", refreshToken);
 
-        if(!tokenProvider.validateToken(refreshToken)){
+        if(!oAuthJwtUtil.OAuthValidateToken(refreshToken)){
             log.error("유효하지 않은 리프레시 토큰입니다.");
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰 ");
         }
@@ -80,10 +81,10 @@ public class AuthService {
         User user = storedToken.getUser();
         log.info("리프레시 토큰에 해당하는 사용자 ID : {}", user.getUser_id());
 
-        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
-        TokenDTO newToken = tokenProvider.generateTokenDto(authentication);
+        Authentication authentication = oAuthJwtUtil.OAuthgetAuthentication(refreshToken);
+        TokenDTO newToken = oAuthJwtUtil.generateTokenDto(authentication);
 
-        tokenProvider.saveRefreshToken(user , newToken.getRefreshToken(),
+        oAuthJwtUtil.saveRefreshToken(user , newToken.getRefreshToken(),
                 LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7));
         return newToken;
     };
@@ -107,10 +108,10 @@ public class AuthService {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(user.getUser_id(), null, authorities);
 
-        TokenDTO loginToken = tokenProvider.generateTokenDto(authentication);
+        TokenDTO loginToken = oAuthJwtUtil.generateTokenDto(authentication);
 
         try {
-            tokenProvider.saveRefreshToken(
+            oAuthJwtUtil.saveRefreshToken(
                     user, loginToken.getRefreshToken(),
                     LocalDateTime.now(ZoneId.of("Asia/Seoul")).plusDays(7)
             );

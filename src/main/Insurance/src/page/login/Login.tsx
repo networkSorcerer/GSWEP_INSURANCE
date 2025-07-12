@@ -61,9 +61,15 @@ const Login = () => {
           providerId,
         });
         const { accessToken, refreshToken } = response.data;
+        console.log(accessToken, refreshToken);
         Common.setAccessToken(accessToken);
         Common.setRefreshToken(refreshToken);
-        console.log(jwtDecode(accessToken));
+        console.log(
+          jwtDecode(accessToken)
+        );
+        if (response.data) {
+          navigate("/main");
+        }
       } catch (err) {
         setError("OAuth 로그인 실패");
       }

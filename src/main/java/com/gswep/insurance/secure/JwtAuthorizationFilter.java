@@ -22,6 +22,7 @@ import java.io.IOException;
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
     private final UserDetailsServiceImpl userDetailsService;
 
     public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
@@ -33,7 +34,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         // HTTP 요청에서 JWT 토큰 추출
         String tokenValue = jwtUtil.getJwtFromHeader(req);
-
+        log.info("tokenValue : {}",tokenValue);
         if (StringUtils.hasText(tokenValue)) {
             // JWT 토큰 유효성 검증
             if (!jwtUtil.validateToken(tokenValue)) {

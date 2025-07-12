@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootApplication
-public class InsuranceApplication {
+public class  InsuranceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(InsuranceApplication.class, args);
