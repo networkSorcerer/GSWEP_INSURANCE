@@ -24,8 +24,4 @@ public class Field_Answers {
     @JoinColumn(name = "field_id")
     private Form_Fields form_fields;
 
-    @ManyToOne
-    @JoinColumn(name = "response_id")
-    private Form_Responses form_responses;
-
 }

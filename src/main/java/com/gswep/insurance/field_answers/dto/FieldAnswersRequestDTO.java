@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FieldAnswersRequestDTO {
-    private Long formId;
+    private Integer fieldsId;
+    private String answers;
 
 }
