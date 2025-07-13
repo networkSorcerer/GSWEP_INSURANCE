@@ -10,6 +10,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FormFieldsRequestDTO {
+    private Integer fieldsId;
     private Long formId;
-
+    private String label;
+    private Integer order;
 }

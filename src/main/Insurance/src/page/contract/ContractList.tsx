@@ -30,8 +30,7 @@ const ContractList = () => {
   const formatMoney = (money: number) => money.toLocaleString("ko-KR") + "원";
 
   const Contract = async () => {
-    console.log("검색어", searchKeyword);
-    console.log("전체 페이지", totalCount);
+
     const res = await AxiosApi.contractApi(searchKeyword, currentPage, 5);
     setData(res.data.list);
     setTotalCount(res.data.totalCount);

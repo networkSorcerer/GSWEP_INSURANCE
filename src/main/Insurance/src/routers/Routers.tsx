@@ -5,9 +5,11 @@ import Login from "../page/login/Login";
 import Contracts from "../page/contract/Contracts";
 import AppLayout from "../layout/applayout/AppLayout";
 import Certificate from "../page/certification/Certificate";
+import DynamicForm from "../page/practice/DynamicForm";
 
 const routers: RouteObject[] = [
   { path: "/", element: <Login /> },
+  { path: "/practice", element: <DynamicForm /> },
   {
     path: "/contract",
     element: <AppLayout />,

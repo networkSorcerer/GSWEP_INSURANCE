@@ -17,7 +17,7 @@ public class Form {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "form_id")
+    @Column(name = "formId")
     private Long formId;
 
     @Column(nullable = false)

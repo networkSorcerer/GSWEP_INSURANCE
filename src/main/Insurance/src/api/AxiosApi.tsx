@@ -24,7 +24,6 @@ const AxiosApi = {
     page: number,
     size: number
   ): Promise<getContractResponse> => {
-    console.log("api searchKey", searchKeyword);
     return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/list", {
       params: {
         select: searchKeyword.oname,
@@ -48,6 +47,22 @@ const AxiosApi = {
       id: id,
     };
     return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/id", {
+      params,
+    });
+  },
+  getProductCode: async (id: number) => {
+    const params = {
+      contract_id: id,
+    };
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/form/find_product_code", {
+      params,
+    });
+  },
+  getForm: async (productCode: string) => {
+    const params = {
+      productCode: productCode,
+    };
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/form/read_form", {
       params,
     });
   },

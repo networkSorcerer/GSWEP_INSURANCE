@@ -11,5 +11,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FormFieldsResponseDTO {
     private Long formId;
-
+    private String label;
+    private Integer order;
 }

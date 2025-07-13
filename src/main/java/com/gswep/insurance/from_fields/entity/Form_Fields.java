@@ -16,15 +16,11 @@ public class Form_Fields {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="field_id")
-    private Integer field_id;
-
-    private String field_label;
-    private String field_type;
-    private Boolean is_required;
-    private Integer field_order;
-
+    @Column(name="fieldId")
+    private Integer fieldId;
+    private String fieldLabel;
+    private Integer fieldOrder;
     @ManyToOne
-    @JoinColumn(name ="form_id")
+    @JoinColumn(name ="formId")
     private Form form;
 }

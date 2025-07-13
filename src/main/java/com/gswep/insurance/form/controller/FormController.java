@@ -28,7 +28,7 @@ public class FormController {
     }
 
     @GetMapping("/read_form")
-    public ResponseEntity<List<FormResponseDTO>> read_form(@RequestParam String productCode){
+    public ResponseEntity<List<FormResponseDTO>> read_form(@RequestParam(name="productCode") String productCode){
         List<FormResponseDTO> formList = formService.readForm(productCode);
         return ResponseEntity.ok(formList);
     }
@@ -40,4 +40,6 @@ public class FormController {
         resultMap.put("productCode",productCode);
         return ResponseEntity.ok(resultMap);
     }
+
+
 }

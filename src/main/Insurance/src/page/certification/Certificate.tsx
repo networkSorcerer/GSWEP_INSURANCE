@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom";
 import AxiosApi from "../../api/AxiosApi";
 import { useEffect, useState } from "react";
+import EditForm from "./EditForm/EditForm";
 
 type id = {
-  contractId: string;
+  contract_id: string;
 };
 interface dataType {
-  product_code: string;
+  contract_no: string;
   start_date: string;
   end_date: string;
   product_name: string;
@@ -14,25 +15,27 @@ interface dataType {
 }
 
 const Certificate = () => {
-  const contractId = useParams<id>();
+  const contract_id = useParams<id>();
   const [data, setData] = useState<dataType>();
 
   useEffect(() => {
-    if (contractId) {
-      DetailContract(Number(contractId));
+    if (contract_id) {
+      DetailContract(Number(contract_id.contract_id));
     }
-  }, [contractId]);
+  }, [contract_id]);
+
   const DetailContract = async (id: number) => {
     const res = await AxiosApi.getDataById(id);
-    setData(res.data);
+    setData(res.data.data);
   };
+
   return (
     <div>
       {" "}
       {data ? (
         <section>
           <p>
-            <strong>증권번호:</strong> {data.product_code || "정보 없음"}
+            <strong>증권번호:</strong> {data.contract_no || "정보 없음"}
           </p>
           <p>
             <strong>보험기간:</strong> {data.start_date || "?"} ~{" "}
@@ -48,6 +51,7 @@ const Certificate = () => {
       ) : (
         <p>해당 정보가 없습니다.</p>
       )}
+      <EditForm />
     </div>
   );
 };
