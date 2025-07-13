@@ -38,7 +38,7 @@ const Login = () => {
       console.log("main으로 가니? ", res.success);
       localStorage.setItem("accessToken", res.token);
       if (res.success === true) {
-        navigate("/main");
+        navigate("/contract");
       }
       console.log("res", res);
     } catch (error) {

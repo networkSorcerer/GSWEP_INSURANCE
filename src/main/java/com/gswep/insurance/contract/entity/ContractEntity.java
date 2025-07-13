@@ -16,10 +16,10 @@ import java.util.Date;
 public class ContractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="contract_id")
-    private Long contract_id;
-
-    private String product_code;
+    @Column(name="contractId")
+    private Long contractId;
+    @Column(name="productCode")
+    private String productCode;
 
     private String product_name;
 

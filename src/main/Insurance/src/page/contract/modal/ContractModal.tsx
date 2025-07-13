@@ -3,6 +3,7 @@ import AxiosApi from "../../../api/AxiosApi";
 import { CancelButton2 } from "../../../layout/styled/Button";
 import { ModalStyle } from "../../../layout/styled/ModalStyle";
 import DownloadButton from "./DownloadButton";
+import headerImage from "../../../images/가입증명서헤더.png";
 // interface Insurer {
 //   name: string;
 //   ceo: string;
@@ -61,7 +62,7 @@ const ContractModal = (props: {
                 overflowY: "auto", // 넘치면 세로 스크롤 생김
               }}
             >
-              <h1
+              {/* <h1
                 style={{
                   color: "#e67627",
                   textAlign: "center",
@@ -69,7 +70,10 @@ const ContractModal = (props: {
                 }}
               >
                 보험 가입 증명서
-              </h1>
+              </h1> */}
+              <div>
+                <img src={headerImage} alt="가입증명서 헤더 이미지" />
+              </div>
 
               <section>
                 <p>
@@ -163,19 +167,6 @@ const ContractModal = (props: {
                 <p>대표: 김정남</p>
                 <p>163, Sejong-daero, Jongno-gu, Seoul, Korea 03183</p>
                 <p>T. 82-1588-5656 / F. 82-2-732-4806</p>
-              </section>
-
-              <section>
-                <h3 style={{ color: "#e67627", marginTop: 30 }}>참고사항</h3>
-                <ul>
-                  {data.importantNotes?.length > 0 ? (
-                    data.importantNotes.map((note: string, i: number) => (
-                      <li key={i}>{note}</li>
-                    ))
-                  ) : (
-                    <li>없음</li>
-                  )}
-                </ul>
               </section>
             </div>
             <CancelButton2

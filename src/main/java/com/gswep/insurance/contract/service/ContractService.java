@@ -69,8 +69,8 @@ public class ContractService {
 
     private ContractResponseDTO convertContractResponseDTO(ContractEntity contractEntity){
         ContractResponseDTO contractResponseDTO = new ContractResponseDTO();
-        contractResponseDTO.setContract_id(contractEntity.getContract_id());
-        contractResponseDTO.setProduct_code(contractEntity.getProduct_code());
+        contractResponseDTO.setContract_id(contractEntity.getContractId());
+        contractResponseDTO.setProduct_code(contractEntity.getProductCode());
         contractResponseDTO.setProduct_name(contractEntity.getProduct_name());
         contractResponseDTO.setContract_no(contractEntity.getContract_no());
         contractResponseDTO.setCo(contractEntity.getCo());

@@ -35,7 +35,7 @@ public class CsvReader {
 
             for(CSVRecord record : records){
                 ContractEntity contractEntity = new ContractEntity();
-                contractEntity.setProduct_code(record.get("상품코드"));
+                contractEntity.setProductCode(record.get("상품코드"));
                 contractEntity.setProduct_name(record.get("상품명"));
                 contractEntity.setContract_no(record.get("계약번호"));
                 contractEntity.setCo(record.get("성명/법인명"));

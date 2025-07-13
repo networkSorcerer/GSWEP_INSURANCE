@@ -12,15 +12,14 @@ import {
 import type { ContractItem } from "../model/contract";
 import { ContractContext } from "../../api/provider/SearchProvider";
 import { PageNavigate } from "../../common/PageNavigate";
-import ContractModal from "./modal/ContractModal";
+import { useNavigate } from "react-router-dom";
 
 const ContractList = () => {
   const [data, setData] = useState<ContractItem[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const { searchKeyword } = useContext(ContractContext);
-  const [certiModal, setCertiModal] = useState(false);
-  const [contractId, setContractId] = useState(0);
+  const navigate = useNavigate();
   useEffect(() => {
     Contract();
   }, [searchKeyword, currentPage]);
@@ -41,13 +40,20 @@ const ContractList = () => {
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber); // 페이지 번호 업데이트 (1부터 시작)
   };
-  const CertiModalState = (contract_id: number) => {
-    setCertiModal(true);
-    setContractId(contract_id);
+
+  const DetailContract = (contract_id: number) => {
+    navigate(`/contract/${contract_id}`);
   };
-  const closeModal = () => {
-    setCertiModal(false);
-  };
+  // import ContractModal from "./modal/ContractModal";
+  // const [certiModal, setCertiModal] = useState(false);
+  // const [contractId, setContractId] = useState(0);
+  // const CertiModalState = (contract_id: number) => {
+  //   setCertiModal(true);
+  //   setContractId(contract_id);
+  // };
+  // const closeModal = () => {
+  //   setCertiModal(false);
+  // };
   return (
     <>
       <TableContainer
@@ -93,7 +99,7 @@ const ContractList = () => {
             {data.map((row) => (
               <TableRow
                 key={row.contract_id}
-                onClick={() => CertiModalState(row.contract_id)}
+                onClick={() => DetailContract(row.contract_id)}
               >
                 <TableCell sx={{ display: { xs: "none", sm: "table-cell" } }}>
                   {row.product_name}
@@ -137,12 +143,12 @@ const ContractList = () => {
           onChange={handlePageChange} // 페이지 변경 시 호출
         />
       </TableContainer>
-      <ContractModal
+      {/* <ContractModal
         open={certiModal}
         close={closeModal}
         type={true}
         id={contractId}
-      />
+      /> */}
     </>
   );
 };

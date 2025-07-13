@@ -25,6 +25,9 @@ public class Insurance {
     @Column(nullable = false)
     private String insurance_name;
 
+    private String insurance_code;
+
+
     @OneToMany(mappedBy = "insurance")
     private List<Form> forms;
 

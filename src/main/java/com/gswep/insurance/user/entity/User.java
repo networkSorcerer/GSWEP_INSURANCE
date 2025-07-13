@@ -46,7 +46,7 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Member> member;
-
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 }
