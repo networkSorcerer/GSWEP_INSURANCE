@@ -103,7 +103,9 @@ public class WebSecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/contract/**").authenticated()
-                        .requestMatchers("/form/**").authenticated()
+                        .requestMatchers("/form/**").authenticated() //form_fields
+                        .requestMatchers("/answers/**").authenticated()
+                        .requestMatchers("/form_fields/**").authenticated()
                         .requestMatchers("/v2/api-docs", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**", "/sign-api/exception").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리

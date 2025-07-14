@@ -20,15 +20,12 @@ public class Form {
     @Column(name = "formId")
     private Long formId;
 
-    @Column(nullable = false)
-    private String name;
 
+    @Column(nullable = false)
     private String productCode;
+
     @ManyToOne
     @JoinColumn(name="contractId")
     private ContractEntity contractEntity;
 
-    @ManyToOne
-    @JoinColumn(name="insurance_id")
-    private Insurance insurance;
 }

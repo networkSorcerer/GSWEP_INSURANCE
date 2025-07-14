@@ -28,11 +28,4 @@ public class Insurance {
     private String insurance_code;
 
 
-    @OneToMany(mappedBy = "insurance")
-    private List<Form> forms;
-
-
-    @OneToMany(mappedBy = "insurance")
-    private List<Member> member;
-
 }

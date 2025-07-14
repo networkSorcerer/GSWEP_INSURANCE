@@ -10,7 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/form_fields")
@@ -27,9 +29,16 @@ public class FormFieldsController {
     }
 
     @PostMapping("/add_fields")
-    public ResponseEntity<Boolean> add_fields (@RequestBody FormFieldsRequestDTO formFieldsRequestDTO){
+    public ResponseEntity<Map<String,Object>> add_fields (@RequestBody FormFieldsRequestDTO formFieldsRequestDTO){
+        Map<String, Object> resultMap = new HashMap<>();
         boolean isSuccess = formFieldsService.addFields(formFieldsRequestDTO);
-        return ResponseEntity.ok(isSuccess);
+        Integer fieldId = 0;
+        if(isSuccess){
+            fieldId = formFieldsService.getLatestId(formFieldsRequestDTO);
+        }
+        resultMap.put("isSuccess",isSuccess);
+        resultMap.put("fieldId",fieldId);
+        return ResponseEntity.ok(resultMap);
     }
 
     @PostMapping("/update_fields")

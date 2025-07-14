@@ -38,9 +38,11 @@ const Certificate = () => {
             <strong>증권번호:</strong> {data.contract_no || "정보 없음"}
           </p>
           <p>
-            <strong>보험기간:</strong> {data.start_date || "?"} ~{" "}
-            {data.end_date || "?"}
+            <strong>보험기간:</strong>{" "}
+            {data.start_date?.substring(0, 10) || "?"} ~{" "}
+            {data.end_date?.substring(0, 10) || "?"}
           </p>
+
           <p>
             <strong>보험종목:</strong> {data.product_name || "정보 없음"}
           </p>

@@ -44,8 +44,6 @@ public class User {
     @Column(name = "provider_id", length = 255)
     private String providerId;
 
-    @OneToMany(mappedBy = "user")
-    private List<Member> member;
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();

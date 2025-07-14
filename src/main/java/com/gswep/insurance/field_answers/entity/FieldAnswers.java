@@ -1,7 +1,6 @@
 package com.gswep.insurance.field_answers.entity;
 
-import com.gswep.insurance.form_responses.entity.Form_Responses;
-import com.gswep.insurance.from_fields.entity.Form_Fields;
+import com.gswep.insurance.from_fields.entity.FormFields;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,9 +10,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Builder
-public class Field_Answers {
+public class FieldAnswers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="answer_id")
@@ -21,7 +19,8 @@ public class Field_Answers {
     private String answer_text;
 
     @OneToOne
-    @JoinColumn(name = "field_id")
-    private Form_Fields form_fields;
+    @JoinColumn(name = "fieldId")
+    private FormFields formFields;
+
 
 }

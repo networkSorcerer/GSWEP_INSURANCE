@@ -29,7 +29,7 @@ public class FormService {
 
             Form form = new Form();
             form.setContractEntity(contractEntity);
-            form.setName(formRequestDTO.getName());
+            form.setProductCode(formRequestDTO.getProductCode());
             formRepository.save(form);
             return true;
         }catch (Exception e){
@@ -56,11 +56,17 @@ public class FormService {
 
     private FormResponseDTO convertEntityToDTO(Form form) {
         FormResponseDTO formResponseDTO = new FormResponseDTO();
-        formResponseDTO.setFormName(form.getName());
-        formResponseDTO.setProductCode(form.getContractEntity().getProductCode());
+        formResponseDTO.setProductCode(form.getProductCode());
         formResponseDTO.setFormId(form.getFormId());
         return formResponseDTO;
     }
 
 
+    public Integer getlatestId(FormRequestDTO formRequestDTO) {
+        return formRepository.findLatestId(formRequestDTO.getContractId());
+    }
+
+    public Integer findFormId(Long contractId) {
+        return formRepository.findFormIdByContractId(contractId);
+    }
 }

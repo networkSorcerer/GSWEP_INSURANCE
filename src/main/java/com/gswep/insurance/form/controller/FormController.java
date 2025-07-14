@@ -22,9 +22,16 @@ public class FormController {
     private final FormService formService;
 
     @PostMapping("/add_form")
-    public ResponseEntity<Boolean> add_form(@RequestBody FormRequestDTO formRequestDTO){
+    public ResponseEntity<Map<String, Object>> add_form(@RequestBody FormRequestDTO formRequestDTO){
+        Map<String, Object> resultMap = new HashMap<>();
         boolean isSuccess =formService.addForm(formRequestDTO);
-        return ResponseEntity.ok(isSuccess);
+        Integer latestId = 0;
+        if(isSuccess ){
+            latestId = formService.getlatestId(formRequestDTO);
+        }
+        resultMap.put("isSuccess",isSuccess);
+        resultMap.put("latestId",latestId);
+        return ResponseEntity.ok(resultMap);
     }
 
     @GetMapping("/read_form")
@@ -38,6 +45,16 @@ public class FormController {
         Map<String,Object> resultMap = new HashMap<>();
         String productCode = formService.getProductCode(contract_id);
         resultMap.put("productCode",productCode);
+        return ResponseEntity.ok(resultMap);
+    }
+
+    @GetMapping("find_formId_by_ProductCode")
+    public ResponseEntity<Map<String,Object>> find_formId_by_ProductCode(@RequestParam(name = "contractId") Long contractId){
+        Map<String,Object> resultMap = new HashMap<>();
+        Integer formId = formService.findFormId(contractId);
+        boolean isExist = formId != null;
+        resultMap.put("isExist",isExist);
+        resultMap.put("formId",formId);
         return ResponseEntity.ok(resultMap);
     }
 

@@ -12,5 +12,5 @@ import lombok.Setter;
 public class FieldAnswersRequestDTO {
     private Integer fieldsId;
     private String answers;
-
+    private Integer fieldAnswersId;
 }
