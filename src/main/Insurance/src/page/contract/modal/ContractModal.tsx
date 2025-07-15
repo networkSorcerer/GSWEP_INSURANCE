@@ -40,10 +40,10 @@ const ContractModal = (props: {
   }, [id, open]);
 
   useEffect(() => {
-    if (id) {
+    if (open && id) {
       getFormId(id);
     }
-  }, [id]);
+  }, [open, id]);
 
   const getFormId = async (contractId: number) => {
     const res = await AxiosApi.findFormId(contractId);
