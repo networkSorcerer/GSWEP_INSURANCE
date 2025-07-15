@@ -1,5 +1,5 @@
-import { Button } from "@mui/material";
 import html2pdf from "html2pdf.js";
+import { CancelButton2 } from "../../../layout/styled/Button";
 
 const DownloadButton = () => {
   const handleDownload = () => {
@@ -16,7 +16,7 @@ const DownloadButton = () => {
       .save();
   };
 
-  return <Button onClick={handleDownload}>PDF 다운로드</Button>;
+  return <CancelButton2 onClick={handleDownload}>PDF 다운로드</CancelButton2>;
 };
 
 export default DownloadButton;

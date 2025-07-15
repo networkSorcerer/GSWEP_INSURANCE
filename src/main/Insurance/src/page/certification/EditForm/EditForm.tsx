@@ -1,57 +1,43 @@
 import { useEffect, useState } from "react";
 import AxiosApi from "../../../api/AxiosApi";
 import { useParams } from "react-router-dom";
-import { Button, Input } from "@mui/material";
+import { Button, Input, ThemeProvider } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
+import type { fieldType } from "../../model/field";
+import theme from "../../../layout/styled/theme";
+import { OrangeButton } from "../../../layout/styled/Button";
+
 interface productCode {
   productCode: string;
 }
-interface fieldType {
-  formId: number;
-  label: string;
-  order: number;
-  fieldId: number;
-  fieldAnswersResponseDTO: {
-    fieldsId: number;
-    answers: string;
-    id: number;
-  };
-}
+
 const EditForm = () => {
   const contract_id = useParams<{ contract_id: string }>();
   const [productCode, setProductCode] = useState<productCode>();
-  // const [formData, setFormData] = useState();
   const [formId, setFormId] = useState<number>();
-  const [listFormId, setListFormId] = useState();
+  const [listFormId, setListFormId] = useState<number>();
   const [fieldsList, setFieldsList] = useState<fieldType[]>();
+
+  // 🔧 필드/응답값 상태를 ID별로 개별 관리
+  const [fieldValues, setFieldValues] = useState<Record<number, string>>({});
+  const [answerValues, setAnswerValues] = useState<Record<number, string>>({});
+
   useEffect(() => {
-    if (contract_id) {
+    if (contract_id?.contract_id) {
       GetProductCode(Number(contract_id.contract_id));
+      getFormId(Number(contract_id.contract_id));
     }
   }, [contract_id]);
-
-  // useEffect(() => {
-  //   if (productCode) {
-  //     GetForm(productCode);
-  //   }
-  // }, [productCode]);
 
   const GetProductCode = async (contractId: number) => {
     const res = await AxiosApi.getProductCode(contractId);
     setProductCode(res.data);
   };
 
-  // const GetForm = async (productCode: productCode) => {
-  //   // 이것도 그냥 나중에 새로운 증권을 등록 할때 가져 오는 걸로
-  //   // 해당 계약의 가입증명서는 바로 그냥 contractId를 통해서 가져올것.
-  //   const res = await AxiosApi.getForm(productCode.productCode);
-  //   setFormData(res.data);
-  // };
   const AddForm = async () => {
-    // 3 완전 form부터 만들어야 할때
     const res = await AxiosApi.addForm(
       Number(contract_id.contract_id),
       productCode?.productCode
@@ -67,7 +53,6 @@ const EditForm = () => {
 
   const findFormId = async () => {
     const res = await AxiosApi.findFormId(Number(contract_id.contract_id));
-    console.log("+클릭", res.data);
     if (res.data.isExist === true) {
       AddField(res.data.formId);
     } else {
@@ -76,26 +61,18 @@ const EditForm = () => {
   };
 
   const AddField = async (formId: number) => {
-    console.log("formId 감지  : ", formId);
     const res = await AxiosApi.addField(formId);
-    console.log(res.data);
     if (res.data.isSuccess === true) {
       addEmptyAnswer(res.data.fieldId);
     }
   };
+
   const addEmptyAnswer = async (fieldId: number) => {
-    console.log("필드 추가후 바로 id 반환 : ", fieldId);
     const res = await AxiosApi.addEmptyAnswer(fieldId);
     if (res.data === true) {
       getFormId(Number(contract_id.contract_id));
     }
-    console.log(res.data);
   };
-  useEffect(() => {
-    if (contract_id?.contract_id) {
-      getFormId(Number(contract_id.contract_id));
-    }
-  }, [contract_id]);
 
   const getFormId = async (contractId: number) => {
     const res = await AxiosApi.findFormId(contractId);
@@ -103,68 +80,126 @@ const EditForm = () => {
       setListFormId(res.data.formId);
       readField(res.data.formId);
     }
-
-    console.log("리스트 출력 시작 getFormId : ", res.data);
   };
+
   useEffect(() => {
     if (listFormId) {
       readField(listFormId);
     }
   }, [listFormId]);
+
   const readField = async (listFormId: number) => {
     const res = await AxiosApi.readField(listFormId);
     setFieldsList(res.data);
-    console.log("fieldList 응답", res.data);
+
+    // 💡 초기값 설정 (fieldValues, answerValues)
+    const newFieldValues: Record<number, string> = {};
+    const newAnswerValues: Record<number, string> = {};
+
+    res.data.forEach((field: fieldType) => {
+      newFieldValues[field.fieldId] = field.label;
+      if (field.fieldAnswersResponseDTO) {
+        newAnswerValues[field.fieldAnswersResponseDTO.id] =
+          field.fieldAnswersResponseDTO.answers;
+      }
+    });
+
+    setFieldValues(newFieldValues);
+    setAnswerValues(newAnswerValues);
   };
+
   const deleteField = async (fieldId: number) => {
     const res = await AxiosApi.deleteField(fieldId);
-    console.log(res.data);
     if (res.data === true) {
       getFormId(Number(contract_id.contract_id));
     }
   };
+
+  const saveField = async (fieldId: number) => {
+    const value = fieldValues[fieldId];
+    if (value !== undefined) {
+      const res = await AxiosApi.updateField(value, fieldId);
+      console.log("필드 저장:", res.data);
+    }
+  };
+
+  const saveAnswers = async (fieldsId: number, answerId: number) => {
+    const value = answerValues[answerId];
+    if (value !== undefined) {
+      const res = await AxiosApi.updateAnswer(value, fieldsId, answerId);
+      console.log("답변 저장:", res.data);
+    }
+  };
+
   return (
     <div>
+      <OrangeButton onClick={findFormId} style={{ marginBottom: "30px" }}>
+        필드 추가
+        <AddIcon />
+      </OrangeButton>
+
       <div>
-        <Button onClick={() => findFormId()}>
-          필드 추가
-          <AddIcon />
-        </Button>
-        <div>
-          {fieldsList ? (
-            fieldsList.map((field, i) => (
-              <div key={i}>
-                <p>{i + 1}</p>
-                <Input value={field.label} placeholder="양식 추가"></Input> :
-                {field.fieldAnswersResponseDTO ? (
+        {fieldsList && fieldsList.length > 0 ? (
+          fieldsList.map((field, i) => (
+            <div key={field.fieldId} style={{ marginBottom: "16px" }}>
+              <p>{i + 1}번 필드</p>
+              <p>필드명</p>
+              <Input
+                value={fieldValues[field.fieldId] ?? ""}
+                placeholder="필드명 입력"
+                onChange={(e) =>
+                  setFieldValues((prev) => ({
+                    ...prev,
+                    [field.fieldId]: e.target.value,
+                  }))
+                }
+              />{" "}
+              :
+              {field.fieldAnswersResponseDTO ? (
+                <>
                   <Input
-                    value={field.fieldAnswersResponseDTO.answers}
-                    placeholder="양식에 대한 응답"
+                    value={answerValues[field.fieldAnswersResponseDTO.id] ?? ""}
+                    placeholder="응답 입력"
+                    onChange={(e) =>
+                      setAnswerValues((prev) => ({
+                        ...prev,
+                        [field.fieldAnswersResponseDTO.id]: e.target.value,
+                      }))
+                    }
                   />
-                ) : (
-                  <Input value="" placeholder="응답 없음" />
-                )}
-                <button>
-                  <SaveRoundedIcon />
-                </button>
-                <button onClick={() => deleteField(field.fieldId)}>
-                  {" "}
-                  <DeleteForeverRoundedIcon />
-                </button>
-              </div>
-            ))
-          ) : (
-            <>
-              <p>필드가 존재하지 않습니다.</p>
-            </>
-          )}
-        </div>
+                </>
+              ) : (
+                <Input value="" placeholder="응답 없음" disabled />
+              )}
+              <>
+                <ThemeProvider theme={theme}>
+                  <Button
+                    onClick={() => {
+                      saveField(field.fieldId);
+                      if (field.fieldAnswersResponseDTO) {
+                        saveAnswers(
+                          field.fieldAnswersResponseDTO.fieldsId,
+                          field.fieldAnswersResponseDTO.id
+                        );
+                      }
+                    }}
+                  >
+                    <SaveRoundedIcon />
+                  </Button>
+
+                  <Button onClick={() => deleteField(field.fieldId)}>
+                    <DeleteForeverRoundedIcon />
+                  </Button>
+                </ThemeProvider>
+              </>
+            </div>
+          ))
+        ) : (
+          <p>필드가 존재하지 않습니다.</p>
+        )}
       </div>
     </div>
   );
 };
-
-// 응답을 저장할때는 해당 계약과 연결 되어야 하고
-// form 은 상품 코드를 따라서 가져올수 있어야 한다/
 
 export default EditForm;

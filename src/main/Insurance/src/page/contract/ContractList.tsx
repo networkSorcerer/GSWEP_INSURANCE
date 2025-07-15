@@ -43,16 +43,7 @@ const ContractList = () => {
   const DetailContract = (contract_id: number) => {
     navigate(`/contract/${contract_id}`);
   };
-  // import ContractModal from "./modal/ContractModal";
-  // const [certiModal, setCertiModal] = useState(false);
-  // const [contractId, setContractId] = useState(0);
-  // const CertiModalState = (contract_id: number) => {
-  //   setCertiModal(true);
-  //   setContractId(contract_id);
-  // };
-  // const closeModal = () => {
-  //   setCertiModal(false);
-  // };
+ 
   return (
     <>
       <TableContainer
@@ -142,12 +133,7 @@ const ContractList = () => {
           onChange={handlePageChange} // 페이지 변경 시 호출
         />
       </TableContainer>
-      {/* <ContractModal
-        open={certiModal}
-        close={closeModal}
-        type={true}
-        id={contractId}
-      /> */}
+     
     </>
   );
 };

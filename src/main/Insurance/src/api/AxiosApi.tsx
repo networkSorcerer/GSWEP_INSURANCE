@@ -112,5 +112,19 @@ const AxiosApi = {
       }
     );
   },
+  updateField: async (label: any, fieldsId: any) => {
+    console.log("saveField -> lable && fieldsId", label, fieldsId);
+    return await AxiosInstance.post(
+      GSWEP_DOMAIN + "/form_fields/update_fields",
+      { label, fieldsId }
+    );
+  },
+  updateAnswer: async (answers: any, fieldsId: any, fieldAnswersId: any) => {
+    return await AxiosInstance.post(GSWEP_DOMAIN + "/answers/update_answers", {
+      answers,
+      fieldsId,
+      fieldAnswersId,
+    });
+  },
 };
 export default AxiosApi;
