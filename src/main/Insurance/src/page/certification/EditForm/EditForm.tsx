@@ -119,9 +119,9 @@ const EditForm = () => {
     const value = fieldValues[fieldId];
     if (value !== undefined) {
       const res = await AxiosApi.updateField(value, fieldId);
-       if (res.data === true) {
-      getFormId(Number(contract_id.contract_id));
-    }
+      if (res.data === true) {
+        getFormId(Number(contract_id.contract_id));
+      }
       console.log("필드 저장:", res.data);
     }
   };
@@ -132,8 +132,8 @@ const EditForm = () => {
       const res = await AxiosApi.updateAnswer(value, fieldsId, answerId);
       console.log("답변 저장:", res.data);
       if (res.data === true) {
-      getFormId(Number(contract_id.contract_id));
-    }
+        getFormId(Number(contract_id.contract_id));
+      }
     }
   };
 

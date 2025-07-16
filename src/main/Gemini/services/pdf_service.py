@@ -40,15 +40,27 @@ def summarize_with_gemini(text: str):
         # model = genai.GenerativeModel("models/gemini-pro") # 이렇게 전체 경로를 시도해볼 수도 있습니다.
 
         prompt = f"""
-다음 문서에서 핵심 정보를 요약해 주세요:
+다음 문서에서 핵심 정보를 요약해 주세요.
 
-- 보장 대상
-- 보장 금액
-- 보험 기간
-- 보험자 이름
+- 요약은 번호 없이 순서대로 작성해주세요.
+- '**' 기호나 Markdown 형식은 사용하지 마세요.
+- 제목 없이 아래 양식에 맞춰주세요
+- 줄바꾸고 한줄 씩 띄어 주세요
+- 간결하고 정리된 문장 형태로 작성해주세요.
+
+요약 항목:
+- 증권 번호:
+- 보험 기간 :
+- 보험자 이름 :
+- 보장 대상 :
+- 보장 금액 :
+-  기타: 
+
+다음은 요약할 문서입니다:
 
 {text[:12000]}
 """
+
         response = model.generate_content(prompt)
         return response.text
     except Exception as e:

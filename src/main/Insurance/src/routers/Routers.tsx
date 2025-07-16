@@ -4,8 +4,8 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../page/login/Login";
 import Contracts from "../page/contract/Contracts";
 import AppLayout from "../layout/applayout/AppLayout";
-import Certificate from "../page/certification/Certificate";
 import DynamicForm from "../page/practice/DynamicForm";
+import CertificateMain from "../page/certification/CertificateMain";
 
 const routers: RouteObject[] = [
   { path: "/", element: <Login /> },
@@ -15,7 +15,7 @@ const routers: RouteObject[] = [
     element: <AppLayout />,
     children: [
       { index: true, element: <Contracts /> },
-      { path: "/contract/:contract_id", element: <Certificate /> },
+      { path: "/contract/:contract_id", element: <CertificateMain /> },
     ],
   },
 ];

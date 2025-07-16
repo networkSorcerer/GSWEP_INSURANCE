@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AxiosApi from "../../../api/AxiosApi";
 import { CancelButton2 } from "../../../layout/styled/Button";
 import { ModalStyle } from "../../../layout/styled/ModalStyle";
-import DownloadButton from "./DownloadButton";
+import DownloadButton from "../../contract/modal/DownloadButton";
 import headerImage from "../../../images/가입증명서헤더.png";
 import footerImage from "../../../images/가입증명서바텀.png";
 import type { fieldType } from "../../model/field";
