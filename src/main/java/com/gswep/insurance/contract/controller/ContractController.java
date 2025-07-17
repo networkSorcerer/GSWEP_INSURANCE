@@ -29,7 +29,7 @@ public class ContractController {
                                                              @RequestParam(value = "size", defaultValue = "5") int size){
 
 
-        log.info("selectValue: {}",select);
+        log.info("selectValue 확인: {}",select);
         log.info("keyword: {}",keyword);
 
 
