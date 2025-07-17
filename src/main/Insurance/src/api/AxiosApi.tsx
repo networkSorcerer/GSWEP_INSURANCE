@@ -2,7 +2,7 @@ import axios from "axios";
 import type { getContractResponse } from "../page/model/contract";
 import AxiosInstance from "./AxiosInstance";
 
-const GSWEP_DOMAIN = "http://localhost:8111";
+const GSWEP_DOMAIN = "";
 
 const AxiosApi = {
   loginApi: async (email: string, password: string) => {
