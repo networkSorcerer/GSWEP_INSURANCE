@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 moment.locale("ko"); // 한글 설정 적용
 
 const Common = {
-  GSWEP_DOMAIN: "http://localhost:8111",
+  GSWEP_DOMAIN: "",
   KH_SOCKET_URL: "ws://localhost:8111/ws/chat",
 
   timeFromNow: (timestamp: Date | string | number): string => {
