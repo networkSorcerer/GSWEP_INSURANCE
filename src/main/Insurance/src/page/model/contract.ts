@@ -1,5 +1,6 @@
 export interface ContractItem {
   contract_id: number;
+  product_code: string;
   product_name: string;
   contract_no: number;
   co: string;

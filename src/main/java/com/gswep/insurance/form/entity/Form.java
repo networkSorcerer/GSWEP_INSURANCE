@@ -1,5 +1,6 @@
 package com.gswep.insurance.form.entity;
 
+import com.gswep.insurance.contract.entity.ContractEntity;
 import com.gswep.insurance.insurance.entity.Insurance;
 import jakarta.persistence.*;
 import lombok.*;
@@ -16,13 +17,15 @@ public class Form {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "form_id")
-    private Integer form_id;
+    @Column(name = "formId")
+    private Long formId;
+
 
     @Column(nullable = false)
-    private String name;
+    private String productCode;
 
     @ManyToOne
-    @JoinColumn(name="insurance_id")
-    private Insurance insurance;
+    @JoinColumn(name="contractId")
+    private ContractEntity contractEntity;
+
 }

@@ -25,7 +25,6 @@ const AppLayout = ({ children }: { children?: React.ReactNode }) => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
-
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

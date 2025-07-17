@@ -36,8 +36,8 @@ public class InsuranceApplication {
 
 			for (ContractEntity contractEntity : insuranceData) {
 				Optional<ContractEntity> existingData = Optional.empty();
-				if (contractEntity.getContract_id() != null) {
-					existingData = contractRepository.findById(contractEntity.getContract_id());
+				if (contractEntity.getContractId() != null) {
+					existingData = contractRepository.findById(contractEntity.getContractId());
 				}
 				if (!existingData.isPresent()) {
 					contractRepository.save(contractEntity);

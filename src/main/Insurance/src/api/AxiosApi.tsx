@@ -24,7 +24,6 @@ const AxiosApi = {
     page: number,
     size: number
   ): Promise<getContractResponse> => {
-    console.log("api searchKey", searchKeyword);
     return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/list", {
       params: {
         select: searchKeyword.oname,
@@ -49,6 +48,82 @@ const AxiosApi = {
     };
     return await AxiosInstance.get(GSWEP_DOMAIN + "/contract/id", {
       params,
+    });
+  },
+  getProductCode: async (id: number) => {
+    const params = {
+      contract_id: id,
+    };
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/form/find_product_code", {
+      params,
+    });
+  },
+  getForm: async (productCode: string) => {
+    const params = {
+      productCode: productCode,
+    };
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/form/read_form", {
+      params,
+    });
+  },
+  addForm: async (contractId: number, productCode?: string) => {
+    return await AxiosInstance.post(GSWEP_DOMAIN + "/form/add_form", {
+      contractId: contractId,
+      productCode: productCode,
+    });
+  },
+  addField: async (formId: number) => {
+    return await AxiosInstance.post(GSWEP_DOMAIN + "/form_fields/add_fields", {
+      formId: formId,
+    });
+  },
+  findFormId: async (contractId: number) => {
+    const params = {
+      contractId: contractId,
+    };
+    return await AxiosInstance.get(
+      GSWEP_DOMAIN + "/form/find_formId_by_ProductCode",
+      { params }
+    );
+  },
+  readField: async (formId: number) => {
+    const params = {
+      formId: formId,
+    };
+    return await AxiosInstance.get(GSWEP_DOMAIN + "/form_fields/get_fields", {
+      params,
+    });
+  },
+  addEmptyAnswer: async (fieldsId: number) => {
+    return await AxiosInstance.post(GSWEP_DOMAIN + "/answers/addAnswers", {
+      fieldsId,
+    });
+  },
+  deleteField: async (fieldId: number) => {
+    console.log("deleteField -> fieldId", fieldId);
+    const params = {
+      fieldsId: fieldId,
+    };
+    return await AxiosInstance.post(
+      GSWEP_DOMAIN + "/form_fields/delete",
+      null,
+      {
+        params,
+      }
+    );
+  },
+  updateField: async (label: any, fieldsId: any) => {
+    console.log("saveField -> lable && fieldsId", label, fieldsId);
+    return await AxiosInstance.post(
+      GSWEP_DOMAIN + "/form_fields/update_fields",
+      { label, fieldsId }
+    );
+  },
+  updateAnswer: async (answers: any, fieldsId: any, fieldAnswersId: any) => {
+    return await AxiosInstance.post(GSWEP_DOMAIN + "/answers/update_answers", {
+      answers,
+      fieldsId,
+      fieldAnswersId,
     });
   },
 };

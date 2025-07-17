@@ -35,13 +35,5 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime birth_day;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "insurance_id")
-    private Insurance insurance;
-
 }
 
